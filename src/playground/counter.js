@@ -10,15 +10,21 @@ class Counter extends React.Component {
   }
 
   handleAddOne() {
-    this.setState({ count: this.state.count + 1 })
+    this.setState((prevState) => {
+      return { count: prevState.count + 1 }
+    })
   }
 
   handleMinusOne() {
-    this.setState({ count: this.state.count - 1 })
+    this.setState((prevState) => {
+      return { count: prevState.count - 1 }
+    })
   }
 
   handleReset() {
-    this.setState({ count: 0 })
+    this.setState(() => {
+      return { count: 0 }
+    })
   }
 
   render() {
@@ -34,3 +40,5 @@ class Counter extends React.Component {
     )
   }
 }
+
+ReactDOM.render(<Counter />, document.getElementById('app'))
