@@ -2,11 +2,19 @@ class IndecisionApp extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      options: [],
+      options: props.options,
     }
     this.handleAddOption = this.handleAddOption.bind(this)
     this.handleRemoveAll = this.handleRemoveAll.bind(this)
     this.handlePick = this.handlePick.bind(this)
+    this.handleRemoveOption = this.handleRemoveOption.bind(this)
+  }
+
+  handleRemoveOption(deletedOption) {
+    console.log('delete option', deletedOption)
+    this.setState((prevState) => ({
+      options: prevState.options.filter((option) => option !== deletedOption)
+    }))
   }
 
   handleAddOption(option) {
@@ -35,19 +43,24 @@ class IndecisionApp extends React.Component {
 
     return (
       <div>
-        <Header
-          title="Indecision"
-          subtitle="Put your life in the hands of a computer"
-        />
+        <Header subtitle="Put your life in the hands of a computer" />
         <Action
           hasOptions={options.length > 0}
           onClick={this.handlePick}
         />
-        <Options options={options} onRemoveAll={this.handleRemoveAll} />
+        <Options
+          options={options}
+          onRemoveAll={this.handleRemoveAll}
+          onRemoveOption={this.handleRemoveOption}
+        />
         <AddOption onSubmit={this.handleAddOption} />
       </div>
     )
   }
+}
+
+IndecisionApp.defaultProps = {
+  options: [],
 }
 
 const Header = (props) => {
@@ -56,9 +69,13 @@ const Header = (props) => {
   return (
     <div>
       <h1>{title}</h1>
-      <h2>{subtitle}</h2>
+      {subtitle && <h2>{subtitle}</h2>}
     </div>
   )
+}
+
+Header.defaultProps = {
+  title: 'Indecision',
 }
 
 const Action = (props) => {
@@ -72,19 +89,31 @@ const Action = (props) => {
 }
 
 const Option = (props) => {
-  const { label } = props;
+  const { label, onRemove } = props;
 
-  return <li>{label}</li>
+  return (
+    <li>
+      {label}
+      <button onClick={() => onRemove(label)}>
+        Remove
+      </button>
+    </li>
+  )
 }
 
 const Options = (props) => {
-  const { options, onRemoveAll } = props;
+  const { options, onRemoveAll, onRemoveOption } = props;
 
   return (
     <div>
       <button onClick={onRemoveAll}>Remove All</button>
       <ol>
-        {options.map((option, index) => <Option key={index} label={option} />)}
+        {options.map((option, index) => (
+          <Option
+            key={index}
+            label={option}
+            onRemove={onRemoveOption} />
+        ))}
       </ol>
     </div>
   )

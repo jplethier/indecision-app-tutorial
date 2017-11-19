@@ -17,15 +17,28 @@ var IndecisionApp = function (_React$Component) {
     var _this = _possibleConstructorReturn(this, (IndecisionApp.__proto__ || Object.getPrototypeOf(IndecisionApp)).call(this, props));
 
     _this.state = {
-      options: []
+      options: props.options
     };
     _this.handleAddOption = _this.handleAddOption.bind(_this);
     _this.handleRemoveAll = _this.handleRemoveAll.bind(_this);
     _this.handlePick = _this.handlePick.bind(_this);
+    _this.handleRemoveOption = _this.handleRemoveOption.bind(_this);
     return _this;
   }
 
   _createClass(IndecisionApp, [{
+    key: 'handleRemoveOption',
+    value: function handleRemoveOption(deletedOption) {
+      console.log('delete option', deletedOption);
+      this.setState(function (prevState) {
+        return {
+          options: prevState.options.filter(function (option) {
+            return option !== deletedOption;
+          })
+        };
+      });
+    }
+  }, {
     key: 'handleAddOption',
     value: function handleAddOption(option) {
       if (!option) {
@@ -62,15 +75,16 @@ var IndecisionApp = function (_React$Component) {
       return React.createElement(
         'div',
         null,
-        React.createElement(Header, {
-          title: 'Indecision',
-          subtitle: 'Put your life in the hands of a computer'
-        }),
+        React.createElement(Header, { subtitle: 'Put your life in the hands of a computer' }),
         React.createElement(Action, {
           hasOptions: options.length > 0,
           onClick: this.handlePick
         }),
-        React.createElement(Options, { options: options, onRemoveAll: this.handleRemoveAll }),
+        React.createElement(Options, {
+          options: options,
+          onRemoveAll: this.handleRemoveAll,
+          onRemoveOption: this.handleRemoveOption
+        }),
         React.createElement(AddOption, { onSubmit: this.handleAddOption })
       );
     }
@@ -78,6 +92,10 @@ var IndecisionApp = function (_React$Component) {
 
   return IndecisionApp;
 }(React.Component);
+
+IndecisionApp.defaultProps = {
+  options: []
+};
 
 var Header = function Header(props) {
   var title = props.title,
@@ -92,12 +110,16 @@ var Header = function Header(props) {
       null,
       title
     ),
-    React.createElement(
+    subtitle && React.createElement(
       'h2',
       null,
       subtitle
     )
   );
+};
+
+Header.defaultProps = {
+  title: 'Indecision'
 };
 
 var Action = function Action(props) {
@@ -117,19 +139,28 @@ var Action = function Action(props) {
 };
 
 var Option = function Option(props) {
-  var label = props.label;
+  var label = props.label,
+      onRemove = props.onRemove;
 
 
   return React.createElement(
     'li',
     null,
-    label
+    label,
+    React.createElement(
+      'button',
+      { onClick: function onClick() {
+          return onRemove(label);
+        } },
+      'Remove'
+    )
   );
 };
 
 var Options = function Options(props) {
   var options = props.options,
-      onRemoveAll = props.onRemoveAll;
+      onRemoveAll = props.onRemoveAll,
+      onRemoveOption = props.onRemoveOption;
 
 
   return React.createElement(
@@ -144,7 +175,10 @@ var Options = function Options(props) {
       'ol',
       null,
       options.map(function (option, index) {
-        return React.createElement(Option, { key: index, label: option });
+        return React.createElement(Option, {
+          key: index,
+          label: option,
+          onRemove: onRemoveOption });
       })
     )
   );
