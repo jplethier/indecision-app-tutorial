@@ -17,7 +17,7 @@ var IndecisionApp = function (_React$Component) {
     var _this = _possibleConstructorReturn(this, (IndecisionApp.__proto__ || Object.getPrototypeOf(IndecisionApp)).call(this, props));
 
     _this.state = {
-      options: props.options
+      options: []
     };
     _this.handleAddOption = _this.handleAddOption.bind(_this);
     _this.handleRemoveAll = _this.handleRemoveAll.bind(_this);
@@ -27,6 +27,28 @@ var IndecisionApp = function (_React$Component) {
   }
 
   _createClass(IndecisionApp, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      var json = localStorage.getItem('options');
+      if (json) {
+        try {
+          var options = JSON.parse(json);
+          this.setState(function () {
+            return { options: options };
+          });
+        } catch (e) {
+          // do nothing, keep empty array
+        }
+      }
+    }
+  }, {
+    key: 'componentDidUpdate',
+    value: function componentDidUpdate(prevProps, prevState) {
+      if (prevState.options.length !== this.state.options.length) {
+        localStorage.setItem('options', JSON.stringify(this.state.options));
+      }
+    }
+  }, {
     key: 'handleRemoveOption',
     value: function handleRemoveOption(deletedOption) {
       console.log('delete option', deletedOption);
@@ -92,10 +114,6 @@ var IndecisionApp = function (_React$Component) {
 
   return IndecisionApp;
 }(React.Component);
-
-IndecisionApp.defaultProps = {
-  options: []
-};
 
 var Header = function Header(props) {
   var title = props.title,
@@ -171,7 +189,7 @@ var Options = function Options(props) {
       { onClick: onRemoveAll },
       'Remove All'
     ),
-    React.createElement(
+    options.length > 0 ? React.createElement(
       'ol',
       null,
       options.map(function (option, index) {
@@ -180,6 +198,10 @@ var Options = function Options(props) {
           label: option,
           onRemove: onRemoveOption });
       })
+    ) : React.createElement(
+      'p',
+      null,
+      'Please add an option to get started!'
     )
   );
 };
@@ -208,11 +230,9 @@ var AddOption = function (_React$Component2) {
 
       var error = this.props.onSubmit(option);
 
-      if (error) {
-        this.setState(function () {
-          return { error: error };
-        });
-      }
+      this.setState(function () {
+        return { error: error };
+      });
       e.target.elements.option.value = null;
     }
   }, {
