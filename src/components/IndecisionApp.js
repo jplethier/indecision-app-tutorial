@@ -6,15 +6,36 @@ import Header from './Header';
 import Options from './Options';
 
 export default class IndecisionApp extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      options: [],
+  state = {
+    options: [],
+  }
+
+  handleRemoveOption = (deletedOption) => {
+    console.log('delete option', deletedOption)
+    this.setState((prevState) => ({
+      options: prevState.options.filter((option) => option !== deletedOption)
+    }))
+  }
+
+  handleAddOption = (option) => {
+    if(!option) {
+      return 'Enter a valid value to add item'
     }
-    this.handleAddOption = this.handleAddOption.bind(this)
-    this.handleRemoveAll = this.handleRemoveAll.bind(this)
-    this.handlePick = this.handlePick.bind(this)
-    this.handleRemoveOption = this.handleRemoveOption.bind(this)
+
+    if (this.state.options.indexOf(option) > -1) {
+      return 'This option already exists'
+    }
+
+    this.setState((prevState) => ({ options: prevState.options.concat([option]) }))
+  }
+
+  handleRemoveAll = () => {
+    this.setState(() => ({ options: [] }))
+  }
+
+  handlePick = () => {
+    const position = Math.floor(Math.random() * this.state.options.length)
+    alert(`Option choosed was: ${this.state.options[position]}`)
   }
 
   componentDidMount() {
@@ -33,34 +54,6 @@ export default class IndecisionApp extends React.Component {
     if(prevState.options.length !== this.state.options.length) {
       localStorage.setItem('options', JSON.stringify(this.state.options))
     }
-  }
-
-  handleRemoveOption(deletedOption) {
-    console.log('delete option', deletedOption)
-    this.setState((prevState) => ({
-      options: prevState.options.filter((option) => option !== deletedOption)
-    }))
-  }
-
-  handleAddOption(option) {
-    if(!option) {
-      return 'Enter a valid value to add item'
-    }
-
-    if (this.state.options.indexOf(option) > -1) {
-      return 'This option already exists'
-    }
-
-    this.setState((prevState) => ({ options: prevState.options.concat([option]) }))
-  }
-
-  handleRemoveAll() {
-    this.setState(() => ({ options: [] }))
-  }
-
-  handlePick() {
-    const position = Math.floor(Math.random() * this.state.options.length)
-    alert(`Option choosed was: ${this.state.options[position]}`)
   }
 
   render() {
