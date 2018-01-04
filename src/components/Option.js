@@ -1,16 +1,12 @@
 import React from "react";
 
-const Option = (props) => {
-  const { label, onRemove } = props;
-
-  return (
-    <li>
-      {label}
-      <button onClick={() => onRemove(label)}>
-        Remove
-      </button>
-    </li>
-  )
-}
+const Option = (props) => (
+  <li>
+    {props.label}
+    <button onClick={() => props.onRemove(props.label)}>
+      Remove
+    </button>
+  </li>
+);
 
 export default Option;
