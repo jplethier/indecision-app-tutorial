@@ -18,7 +18,7 @@
   font-size: $l-size;
 
   padding: 2.4rem;
-  margin: 0 0 $xl-size;
+  margin: 0 0 $m-size;
   width: 100%;
 }
 
@@ -27,4 +27,10 @@
   border: none;
   color: $off-white;
   padding: 0;
+}
+
+@media (min-width: $desktop-breakpoint) {
+  .button--big {
+    margin: 0 0 $xl-size;
+  }
 }
